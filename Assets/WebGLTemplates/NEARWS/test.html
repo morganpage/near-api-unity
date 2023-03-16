@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player</title>
+  <link rel="stylesheet" href="/assets/index-2104d62f.css">
+</head>
+
+<body style="text-align: center">
+  <script type="module" crossorigin src="/assets/index-062b7f70.js"></script>
+
+
+  <h1>NEAR Wallet Integration</h1>
+  <p id="welcome">You must login...</p>
+  <button id="login" onclick="login()">Login</button>
+  <button id="logout" onclick="logout()">Logout</button>
+  <button onclick="addMessage()">Add</button>
+  <input type="text" id="message" />
+  <ol id="list"></ol>
+  <script>
+    let nearWallet;
+    let isSignedIn = false;
+    let contractId = "guest-book.testnet";
+    window.onload = async () => {
+      nearWallet = new Wallet({ createAccessKeyFor: "guest-book.testnet" });
+      isSignedIn = await nearWallet.startUp()
+      document.getElementById("login").style.display = !isSignedIn ? "inline" : "none";
+      document.getElementById("logout").style.display = isSignedIn ? "inline" : "none";
+      if (isSignedIn) {
+        const accounts = await nearWallet.wallet.getAccounts();
+        document.getElementById("welcome").innerText = "Welcome " + accounts[0].accountId;
+        getMessages();
+      }
+    }
+
+    let login = async () => {
+      nearWallet.signIn();
+    }
+
+    let logout = () => {
+      nearWallet.signOut();
+    }
+
+    let addMessage = async () => {
+      let message = document.getElementById("message").value;
+      let t = await nearWallet.callMethod({ contractId, method: "addMessage", args: { text: message } });
+      getMessages();
+    }
+    let getMessages = async () => {
+      let messages = await nearWallet.viewMethod({ contractId, method: "getMessages" })
+      document.getElementById("list").innerHTML = "";
+      messages.forEach(message => {
+        let li = document.createElement("li");
+        li.innerText = message.sender + ": " + message.text;
+        document.getElementById("list").appendChild(li);
+      });
+    }
+  </script>
+
+
+</body>
+
+</html>
