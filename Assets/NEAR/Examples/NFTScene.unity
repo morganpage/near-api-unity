@@ -240,7 +240,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1492328927, guid: cd0660ba2172e47938aa079b1b375820, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1696120903, guid: cd0660ba2172e47938aa079b1b375820, type: 3}
       propertyPath: m_AnchorMax.x
@@ -337,6 +337,14 @@ PrefabInstance:
     - target: {fileID: 8768915775153511625, guid: cd0660ba2172e47938aa079b1b375820, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8768915775153511626, guid: cd0660ba2172e47938aa079b1b375820, type: 3}
+      propertyPath: _network
+      value: testnet
+      objectReference: {fileID: 0}
+    - target: {fileID: 8768915775153511626, guid: cd0660ba2172e47938aa079b1b375820, type: 3}
+      propertyPath: _contractId
+      value: nft-unity-contract.morganpage1.testnet
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd0660ba2172e47938aa079b1b375820, type: 3}

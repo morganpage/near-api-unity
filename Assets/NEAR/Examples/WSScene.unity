@@ -2071,6 +2071,7 @@ MonoBehaviour:
   _inputMessage: {fileID: 1046329964}
   _buttonSignInOut: {fileID: 8768915775660383850}
   _textWelcome: {fileID: 8768915775999075648}
+  _buttonAdd: {fileID: 780535518}
 --- !u!114 &8768915776756212513
 MonoBehaviour:
   m_ObjectHideFlags: 0

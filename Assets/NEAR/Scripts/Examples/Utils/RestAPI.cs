@@ -13,6 +13,10 @@ namespace NEAR
     {
       Debug.Log("GetImage: " + imageIPFS);
       imageIPFS = imageIPFS.Replace("///", IPFSURL);
+      if (!imageIPFS.StartsWith(IPFSURL))
+      {
+        imageIPFS = IPFSURL + imageIPFS;
+      }
       using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(imageIPFS))
       {
         try

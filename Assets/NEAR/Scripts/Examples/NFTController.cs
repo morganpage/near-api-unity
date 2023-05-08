@@ -72,6 +72,7 @@ public class NFTController : MonoBehaviour
       _textTokens.text = "Select a token to continue...";
 
       // Get the image
+      Debug.Log("OnNftTokensForOwner: " + token.metadata.media);
       Texture texture = await RestAPI.GetImage(token.metadata.media);
       if (texture != null)
       {

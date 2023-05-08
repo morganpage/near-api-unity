@@ -14,6 +14,7 @@ public class WSController : MonoBehaviour
   [SerializeField] private TMP_InputField _inputMessage;
   [SerializeField] Button _buttonSignInOut;
   [SerializeField] private TMP_Text _textWelcome;
+  [SerializeField] Button _buttonAdd;
 
   private bool _signedIn;
   private string _accountId;
@@ -89,6 +90,7 @@ public class WSController : MonoBehaviour
   public void AddMessage()
   {
     Debug.Log("AddMessage: " + _inputMessage.text);
+    _buttonAdd.interactable = false;
     //args: { text: message }
     string args = @"{""text"":""" + _inputMessage.text + @"""}";
     var definition = new { text = _inputMessage.text };
@@ -119,6 +121,8 @@ public class WSController : MonoBehaviour
   void OnCallMethod(string result)
   {
     Debug.Log("OnCallMethod: " + result);
+    _buttonAdd.interactable = true;
+    _inputMessage.text = "";
     GetMessages();
   }
 }
