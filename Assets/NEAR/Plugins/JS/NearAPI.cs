@@ -8,7 +8,7 @@ namespace NEAR
     private static string _signedIn = "false";//Just to mimic the actual functionality
     private static string _dummytokens = "[{token_id:'1',metadata:{title:'Fred',media:'https://roguefoxguild.mypinata.cloud/ipfs/QmYMT3s9C4ckQxfMEm7ew4PUVPSrYLeo36uhdhGSctDJdB/Character_1.png'} },{token_id:'2',metadata:{title:'Alice',media:'https://roguefoxguild.mypinata.cloud/ipfs/QmYMT3s9C4ckQxfMEm7ew4PUVPSrYLeo36uhdhGSctDJdB/Character_2.png'}}]";
 
-#if !UNITY_EDITOR
+#if PLATFORM_WEBGL
 
     [DllImport("__Internal")]
     public static extern void RequestSignIn(string contractId, string network = "testnet");

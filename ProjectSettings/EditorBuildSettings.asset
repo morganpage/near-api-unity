@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/BasicScene.unity
+    guid: c9cd34dc5c628465fa667a181f33febc
+  - enabled: 1
+    path: Assets/NEAR/NearClient/Splash.unity
+    guid: 7ae8a84dae9cdfc47a8a8f1e2e6734b1
+  - enabled: 1
+    path: Assets/NEAR/NearClient/Login.unity
+    guid: b8885839ec751df41a0527572a9e6055
+  - enabled: 1
+    path: Assets/NEAR/NearClient/Near.unity
+    guid: 5dac6d961d5bf09449649a6c708db5d3
+  - enabled: 1
     path: Assets/NEAR/Examples/MenuScene.unity
     guid: 2a7cbb19cf61d468e94356f7da9f4aef
   - enabled: 1

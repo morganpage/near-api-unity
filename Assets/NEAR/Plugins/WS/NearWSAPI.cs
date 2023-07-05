@@ -7,7 +7,7 @@ namespace NEAR
   public class NearWSAPI
   { //Wallet Selector API see - https://docs.near.org/tools/wallet-selector
 
-#if !UNITY_EDITOR
+#if PLATFORM_WEBGL
 
     [DllImport("__Internal")]
     public static extern void WS_StartUp(string contractId, string network = "testnet");
