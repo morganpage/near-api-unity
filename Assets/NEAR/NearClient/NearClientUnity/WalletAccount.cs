@@ -1,5 +1,6 @@
 ﻿using NearClientUnity.KeyStores;
 using NearClientUnity.Utilities;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,6 +10,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Util;
+using UnityEngine;
 
 namespace NearClientUnity
 {
@@ -18,7 +20,8 @@ namespace NearClientUnity
     private const string LoginWalletUrlSuffix = "/login/";
     private const string PendingAccessKeyPrefix = "pending_key";
 
-    private dynamic _authData = new ExpandoObject();
+    //private dynamic _authData = new ExpandoObject();
+    private JObject _authDataJson = new JObject();
     private string _authDataKey;
     private IExternalAuthService _authService;
     private IExternalAuthStorage _authStorage;
@@ -38,14 +41,17 @@ namespace NearClientUnity
       _authService = authService;
       _authStorage = authStorage;
 
-
+      Debug.Log("WalletAccount: " + _authDataKey);
       if (_authStorage.HasKey(_authDataKey))
       {
-        _authData.AccountId = _authStorage.GetValue(_authDataKey);
+        //_authData.AccountId = _authStorage.GetValue(_authDataKey);
+        _authDataJson["AccountId"] = _authStorage.GetValue(_authDataKey);
       }
       else
       {
-        _authData.AccountId = null;
+        _authDataJson = new JObject();
+        //_authData.AccountId = null;
+        //_authDataJson["AccountId"] = null;
       }
     }
 
@@ -57,8 +63,8 @@ namespace NearClientUnity
       Uri uri = new Uri(url);
       string publicKey = HttpUtility.ParseQueryString(uri.Query).Get("public_key");
       string accountId = HttpUtility.ParseQueryString(uri.Query).Get("account_id");
-      _authData.AccountId = accountId;
-
+      //_authData.AccountId = accountId;
+      _authDataJson["AccountId"] = accountId;
       try
       {
         _authStorage.Add(_authDataKey, accountId);
@@ -72,12 +78,18 @@ namespace NearClientUnity
 
     public string GetAccountId()
     {
-      return _authData.AccountId ?? "";
+      Debug.Log("GetAccountId");
+      if (_authDataJson["AccountId"] == null)
+      {
+        return "";
+      }
+      return _authDataJson["AccountId"].ToString();
     }
 
     public bool IsSignedIn()
     {
-      if (_authData.AccountId == null) return false;
+      Debug.Log("IsSignedIn");
+      if (_authDataJson["AccountId"] == null) return false;
       return true;
     }
 
@@ -101,13 +113,17 @@ namespace NearClientUnity
             }).ReadAsStringAsync().Result;
 
       await _keyStore.SetKeyAsync(_networkId, PendingAccessKeyPrefix + accessKey.GetPublicKey(), accessKey);
+      Debug.Log("RequestSignIn: " + url.Uri.AbsoluteUri);
       return _authService.OpenUrl(url.Uri.AbsoluteUri);
     }
 
     public void SignOut()
     {
-      _authData = new ExpandoObject();
-      _authData.AccountId = null;
+      Debug.Log("SignOut");
+      // _authData = new ExpandoObject();
+      // _authData.AccountId = null;
+      _authDataJson = new JObject();
+      //_authDataJson["AccountId"] = null;
       _authStorage.DeleteKey(_authDataKey);
     }
 
