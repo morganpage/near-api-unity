@@ -1,5 +1,6 @@
 ﻿using NearClientUnity.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Dynamic;
 using System.Threading.Tasks;
@@ -76,6 +77,7 @@ namespace NearClientUnity.Providers
 
     public override async Task<dynamic> QueryAsync(string path, string data)
     {
+      Debug.Log("JsonRpcProvider.cs: QueryAsync(string path, string data)");
       var parameters = new dynamic[2];
       parameters[0] = path;
       parameters[1] = data;
@@ -90,6 +92,12 @@ namespace NearClientUnity.Providers
         throw new Exception($"Quering {path} failed: {e.Message}.");
       }
     }
+
+    // public override async Task<JObject> QueryAsyncJO(string path, string data)
+    // {
+
+    // }
+
 
     public override async Task<FinalExecutionOutcome> SendTransactionAsync(SignedTransaction signedTransaction)
     {

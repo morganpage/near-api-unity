@@ -15,7 +15,7 @@ public class BasicScript : MonoBehaviour
 
 
 
-  public void Login()
+  public async void Login()
   {
     Debug.Log("Login");
     NearConfig config = new NearConfig();
@@ -37,6 +37,8 @@ public class BasicScript : MonoBehaviour
     new AuthService(),
     new AuthStorage());
     Debug.Log("Login2");
+    await WalletAccount.CompleteSignIn("nearclientunity://nearprotocol.com/success?account_id=morganpage.testnet&public_key=ed25519%3ACjkngWokhqGRaApoMuaqiVWDcYdiV5NUK5BiFwq4ehNG&all_keys=ed25519%3A4ZjvEfgbBU78Pw2di1RxTC5LsYUD5SxHp6Co3JJCgUGk");
+    //SceneManager.LoadScene("Near", LoadSceneMode.Single);
 
   }
 

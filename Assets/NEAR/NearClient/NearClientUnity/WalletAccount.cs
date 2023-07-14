@@ -59,10 +59,13 @@ namespace NearClientUnity
 
     public async Task CompleteSignIn(string url)
     {
-      HttpEncoder.Current = HttpEncoder.Default;
+      //HttpEncoder.Current = HttpEncoder.Default;
       Uri uri = new Uri(url);
       string publicKey = HttpUtility.ParseQueryString(uri.Query).Get("public_key");
       string accountId = HttpUtility.ParseQueryString(uri.Query).Get("account_id");
+      Debug.Log("CompleteSignIn: " + url);
+      Debug.Log("CompleteSignIn: " + publicKey);
+      Debug.Log("CompleteSignIn: " + accountId);
       //_authData.AccountId = accountId;
       _authDataJson["AccountId"] = accountId;
       try
@@ -129,6 +132,7 @@ namespace NearClientUnity
 
     private async Task MoveKeyFromTempToPermanent(string accountId, string publicKey)
     {
+      Debug.Log("MoveKeyFromTempToPermanent: " + accountId + " " + publicKey);
       var pendingAccountId = PendingAccessKeyPrefix + publicKey;
       KeyPair keyPair;
       try
@@ -146,7 +150,8 @@ namespace NearClientUnity
       }
       catch (Exception e)
       {
-        throw e;
+        Debug.Log("MoveKeyFromTempToPermanent: " + e.Message);
+        //throw e;
       }
 
       try

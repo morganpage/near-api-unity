@@ -1,5 +1,7 @@
 ﻿using NearClientUnity.KeyStores;
 using NearClientUnity.Utilities;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Dynamic;
 using System.Threading.Tasks;
@@ -17,24 +19,30 @@ namespace NearClientUnity
     {
       _config = config;
       Debug.Log("Near.cs: Near(NearConfig config)");
-      dynamic providerArgs = new ExpandoObject();
+      //dynamic providerArgs = new ExpandoObject();
+      JObject providerArgsJson = new JObject();
       Debug.Log("Near.cs: Near(NearConfig config)1");
-      providerArgs.Url = config.NodeUrl;
-      dynamic signerArgs = new ExpandoObject();
-      signerArgs.KeyStore = config.KeyStore;
-      Debug.Log("Near.cs: Near(NearConfig config)2");
+      //providerArgs.Url = config.NodeUrl;
+      providerArgsJson["Url"] = config.NodeUrl;
+      //dynamic signerArgs = new ExpandoObject();
+      JObject signerArgsJson = new JObject();
+      //signerArgs.KeyStore = config.KeyStore;
+      signerArgsJson["KeyStore"] = JsonConvert.SerializeObject(config.KeyStore);
+      Debug.Log("Near.cs: Near(NearConfig config)2:" + signerArgsJson["KeyStore"]);
       var connectionConfig = new ConnectionConfig()
       {
         NetworkId = config.NetworkId,
         Provider = new ProviderConfig()
         {
           Type = config.ProviderType,
-          Args = providerArgs
+          //Args = providerArgs,
+          ArgsJson = providerArgsJson
         },
         Signer = new SignerConfig()
         {
           Type = config.SignerType,
-          Args = signerArgs
+          //Args = signerArgs,
+          ArgsJson = signerArgsJson
         }
       };
       Debug.Log("Near.cs: Near(NearConfig config)3");

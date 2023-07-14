@@ -1,5 +1,6 @@
 ﻿using NearClientUnity.KeyStores;
 using NearClientUnity.Providers;
+using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
@@ -56,7 +57,9 @@ namespace NearClientUnity
       {
         case SignerType.InMemory:
           {
-            return new InMemorySigner(config.Args.KeyStore as KeyStore);
+            InMemoryKeyStore keyStore = JsonConvert.DeserializeObject<InMemoryKeyStore>(config.ArgsJson["KeyStore"].ToString());
+            return new InMemorySigner(keyStore);
+            //return new InMemorySigner(config.Args.KeyStore as KeyStore);
           }
         default:
           throw new Exception($"Unknown signer type {config.Type}");
