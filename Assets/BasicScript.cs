@@ -5,6 +5,7 @@ using NearClientUnity;
 using NearClientUnity.Utilities;
 using NearClientUnity.KeyStores;
 using NearClientUnity.Providers;
+using UnityEngine.SceneManagement;
 
 public class BasicScript : MonoBehaviour
 {
@@ -39,5 +40,10 @@ public class BasicScript : MonoBehaviour
 
   }
 
-
+  public void OpenSplash()
+  {
+    Debug.Log("OpenSplash");
+    //Application.OpenURL("nearclientunity://nearprotocol.com/success");
+    SceneManager.LoadScene("Splash", LoadSceneMode.Single);
+  }
 }
