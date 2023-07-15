@@ -145,11 +145,13 @@ namespace NearClientUnity
 
     public async Task FetchStateAsync()
     {
+      Debug.Log("FetchStateAsync");
       _accessKey = null;
 
       try
       {
         var rawState = await _connection.Provider.QueryAsync($"account/{_accountId}", "");
+        Debug.Log("FetchStateAsync: " + rawState);
         if (rawState == null)
         {
           return;
@@ -163,7 +165,16 @@ namespace NearClientUnity
           CodeHash = rawState.code_hash,
           StoragePaidAt = rawState.storage_paid_at,
           StorageUsage = rawState.storage_usage
+
+          // AccountId = rawState["account_id"].ToString() ?? null,
+          // Staked = rawState["staked"].ToString() ?? null,
+          // Locked = rawState["locked"].ToString(),
+          // Amount = rawState["amount"].ToString(),
+          // CodeHash = rawState["code_hash"].ToString(),
+          // StoragePaidAt = (uint)rawState["storage_paid_at"],
+          // StorageUsage = (uint)rawState["storage_usage"]
         };
+        Debug.Log("FetchStateAsync: " + _state);
       }
       catch (Exception)
       {
@@ -171,8 +182,13 @@ namespace NearClientUnity
       }
 
       var publicKey = await _connection.Signer.GetPublicKeyAsync(_accountId, _connection.NetworkId);
-      if (publicKey == null) return;
-
+      Debug.Log("FetchStateAsync1: " + publicKey);
+      if (publicKey == null)
+      {
+        Debug.Log("FetchStateAsync1.2: PublicKey is null");
+        return;
+      }
+      Debug.Log("FetchStateAsync2: " + publicKey);
       try
       {
         var rawAccessKey =

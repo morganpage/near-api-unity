@@ -109,8 +109,11 @@ namespace NearClientUnity
 
     public async Task<Account> AccountAsync(string accountId)
     {
+      Debug.Log("Near.cs: AccountAsync(string accountId)");
       var account = new Account(_connection, accountId);
+      Debug.Log("Near.cs: AccountAsync(string accountId)1:" + account);
       await account.FetchStateAsync();
+      Debug.Log("Near.cs: AccountAsync(string accountId)2:" + account);
       return account;
     }
 

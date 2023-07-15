@@ -77,14 +77,17 @@ namespace NearClientUnity.Providers
 
     public override async Task<dynamic> QueryAsync(string path, string data)
     {
-      Debug.Log("JsonRpcProvider.cs: QueryAsync(string path, string data)");
-      var parameters = new dynamic[2];
-      parameters[0] = path;
-      parameters[1] = data;
-
+      Debug.Log("JsonRpcProvider.cs: QueryAsync(string path, string data):" + path + ":" + data);
+      // var parameters = new dynamic[2];
+      // parameters[0] = path;
+      // parameters[1] = data;
+      var parameters = new JArray();
+      parameters.Add(path);
+      parameters.Add(data);
       try
       {
-        var result = await SendJsonRpc("query", parameters);
+        var result = await SendJsonRpcNew("query", parameters);
+        //var result = await SendJsonRpc("query", parameters);
         return result;
       }
       catch (Exception e)
@@ -92,12 +95,6 @@ namespace NearClientUnity.Providers
         throw new Exception($"Quering {path} failed: {e.Message}.");
       }
     }
-
-    // public override async Task<JObject> QueryAsyncJO(string path, string data)
-    // {
-
-    // }
-
 
     public override async Task<FinalExecutionOutcome> SendTransactionAsync(SignedTransaction signedTransaction)
     {
@@ -109,15 +106,38 @@ namespace NearClientUnity.Providers
       return result;
     }
 
+    private async Task<JObject> SendJsonRpcNew(string method, JArray parameters)
+    {
+      JObject requestJson = new JObject();
+      requestJson["method"] = method;
+      requestJson["parameters"] = parameters;
+      requestJson["id"] = _id++;
+      requestJson["jsonrpc"] = "2.0";
+      var requestString = JsonConvert.SerializeObject(requestJson).Replace("\"parameters\":", "\"params\":");
+      Debug.Log("JsonRpcProvider.cs: SendJsonRpc:" + requestString);
+      try
+      {
+        var result = await Web.FetchAsync(_connection, requestString);
+        Debug.Log("JsonRpcProvider.cs: SendJsonRpc: result:" + result);
+        return result;
+      }
+      catch (HttpException e)
+      {
+        throw new Exception($"{e.ErrorCode}: {e.Message}");
+      }
+    }
+
+
+
     private async Task<dynamic> SendJsonRpc(string method, dynamic[] parameters)
     {
       dynamic request = new ExpandoObject();
-
       request.method = method;
       request.parameters = parameters;
       request.id = _id++;
       request.jsonrpc = "2.0";
       var requestString = JsonConvert.SerializeObject(request).Replace("\"parameters\":", "\"params\":");
+      Debug.Log("JsonRpcProvider.cs: SendJsonRpc:" + requestString);
       try
       {
         var result = await Web.FetchJsonAsync(_connection, requestString);
