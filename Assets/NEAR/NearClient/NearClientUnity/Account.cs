@@ -150,7 +150,7 @@ namespace NearClientUnity
 
       try
       {
-        var rawState = await _connection.Provider.QueryAsync($"account/{_accountId}", "");
+        var rawState = await _connection.Provider.QueryAsyncJO($"account/{_accountId}", "");
         Debug.Log("FetchStateAsync: " + rawState);
         if (rawState == null)
         {
@@ -158,21 +158,21 @@ namespace NearClientUnity
         }
         _state = new AccountState()
         {
-          AccountId = rawState.account_id ?? null,
-          Staked = rawState.staked ?? null,
-          Locked = rawState.locked,
-          Amount = rawState.amount,
-          CodeHash = rawState.code_hash,
-          StoragePaidAt = rawState.storage_paid_at,
-          StorageUsage = rawState.storage_usage
+          // AccountId = rawState.account_id ?? null,
+          // Staked = rawState.staked ?? null,
+          // Locked = rawState.locked,
+          // Amount = rawState.amount,
+          // CodeHash = rawState.code_hash,
+          // StoragePaidAt = rawState.storage_paid_at,
+          // StorageUsage = rawState.storage_usage
 
-          // AccountId = rawState["account_id"].ToString() ?? null,
-          // Staked = rawState["staked"].ToString() ?? null,
-          // Locked = rawState["locked"].ToString(),
-          // Amount = rawState["amount"].ToString(),
-          // CodeHash = rawState["code_hash"].ToString(),
-          // StoragePaidAt = (uint)rawState["storage_paid_at"],
-          // StorageUsage = (uint)rawState["storage_usage"]
+          AccountId = rawState["account_id"] != null ? rawState["account_id"].ToString() : null,
+          Staked = rawState["staked"] != null ? rawState["staked"].ToString() : null,
+          Locked = rawState["locked"] != null ? rawState["locked"].ToString() : null,
+          Amount = rawState["amount"].ToString(),
+          CodeHash = rawState["code_hash"] != null ? rawState["code_hash"].ToString() : null,
+          StoragePaidAt = rawState["storage_paid_at"] != null ? (uint)rawState["storage_paid_at"] : 0,
+          StorageUsage = rawState["storage_usage"] != null ? (uint)rawState["storage_usage"] : 0
         };
         Debug.Log("FetchStateAsync: " + _state);
       }

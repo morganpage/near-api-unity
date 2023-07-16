@@ -42,6 +42,6 @@ namespace NearClientUnity.Providers
 
     public abstract Task<FinalExecutionOutcome> SendTransactionAsync(SignedTransaction signedTransaction);
 
-    // public abstract Task<JObject> QueryAsyncJO(string path, string data);
+    public abstract Task<JObject> QueryAsyncJO(string path, string data);
   }
 }

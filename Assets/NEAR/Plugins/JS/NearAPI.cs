@@ -1,5 +1,10 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
+using NearClientUnity;
+using NearClientUnity.Utilities;
+using NearClientUnity.KeyStores;
+using NearClientUnity.Providers;
+
 
 namespace NEAR
 {
@@ -29,6 +34,29 @@ namespace NEAR
     public static extern void ContractMethod(string accountId, string contractId,string methodName,string args = "", bool changeMethod = false, string network = "testnet");
 
 #else
+    public static WalletAccount WalletAccount { get; set; }
+    public static Near Near { get; set; }
+
+    public static void StartUp(string contractId, string networkId, string nodeUrl, string walletUrl)
+    {
+      Debug.Log("StartUp: " + contractId + " " + networkId);
+      Near = new Near(config: new NearConfig()
+      {
+        NetworkId = networkId,
+        NodeUrl = nodeUrl,
+        ProviderType = ProviderType.JsonRpc,
+        SignerType = SignerType.InMemory,
+        KeyStore = new InMemoryKeyStore(),
+        ContractName = contractId,
+        WalletUrl = walletUrl
+      });
+      WalletAccount = new WalletAccount(
+      Near,
+      "",
+      new AuthService(),
+      new AuthStorage());
+
+    }
 
     public static void RequestSignIn(string contractId, string network = "testnet")
     {
@@ -51,13 +79,29 @@ namespace NEAR
     public static void GetAccountId(string network = "testnet")
     {
       Debug.Log("GetAccountId: " + network);
-      NearCallbacks.Instance.GetAccountId("testing.near");
+      //NearCallbacks.Instance.GetAccountId("testing.near");
+      var walletAccountId = WalletAccount.GetAccountId();
+      NearCallbacks.Instance.GetAccountId(walletAccountId);
     }
 
-    public static void NftTokensForOwner(string accountId, string contractId, string network = "testnet")
+    public static async void NftTokensForOwner(string accountId, string contractId, string network = "testnet")
     {
       Debug.Log("NftTokensForOwner: " + accountId + " " + contractId + " " + network);
-      NearCallbacks.Instance.NftTokensForOwner(_dummytokens);
+      //NearCallbacks.Instance.NftTokensForOwner(_dummytokens);
+      Account account = new Account(Near.Connection, accountId);
+      Debug.Log("NftTokensForOwner1: " + account);
+      ContractOptions contractOptions = new ContractOptions();
+      contractOptions.viewMethods = new string[] { "nft_total_supply", "nft_supply_for_owner", "nft_tokens_for_owner" };
+      ContractNear contract = new ContractNear(account, contractId, contractOptions);
+      Debug.Log("NftTokensForOwner2: " + contract);
+      var response = await contract.View("nft_tokens_for_owner", new { account_id = accountId });
+      Debug.Log("NftTokensForOwner3: " + response.result);
+      NearCallbacks.Instance.NftTokensForOwner(response.result);
+      // contract.View("nft_tokens_for_owner", new { account_id = accountId }, new ViewArgs(), (err, result) =>
+      // {
+      //   Debug.Log("NftTokensForOwner2: " + result);
+      //   NearCallbacks.Instance.NftTokensForOwner(result);
+      // }
     }
 
     public static void ContractMethod(string accountId, string contractId, string methodName, string args = "", bool changeMethod = false, string network = "testnet")

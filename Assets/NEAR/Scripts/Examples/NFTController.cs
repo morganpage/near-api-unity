@@ -16,6 +16,7 @@ public class NFTController : MonoBehaviour
   [SerializeField] Button _buttonSignInOut;
   [SerializeField] UIToken _uiTokenPrefab;
   [SerializeField] Transform _uiTokenParent;
+  [SerializeField] NearAPIConfig _nearAPIConfig;
 
   private string _accountId;
   private bool _signedIn;
@@ -36,11 +37,30 @@ public class NFTController : MonoBehaviour
 
   void Start()
   {
-    NearAPI.IsSignedIn(_network);
+    //NearAPI.IsSignedIn(_network);
+    //NearAPI.StartUp(_contractId, _network);
+    Application.deepLinkActivated += async (string url) => await CompleteSignIn(url);
+    NearAPIConfigNetwork nearAPIConfigNetwork = _nearAPIConfig.GetNetwork(_network);
+    NearAPI.StartUp(_contractId, nearAPIConfigNetwork.NetworkId, nearAPIConfigNetwork.NodeUrl, nearAPIConfigNetwork.WalletUrl);
+    OnSignIn(NearAPI.WalletAccount.IsSignedIn());
+  }
+  async Task CompleteSignIn(string url)
+  {
+    Debug.Log("CompleteSignIn: " + url);
+    await NearAPI.WalletAccount.CompleteSignIn(url);
+    OnSignIn(NearAPI.WalletAccount.IsSignedIn());
+    //_signedIn = NearAPI.WalletAccount.IsSignedIn();
+
+    // await NearPersistentManager.Instance.WalletAccount.CompleteSignIn(url);
+    // if(NearPersistentManager.Instance.WalletAccount.IsSignedIn() == true)
+    // {
+    //     SceneManager.LoadScene("Near", LoadSceneMode.Single);
+    // }        
   }
 
   private void OnSignIn(bool signedIn)
   {
+    Debug.Log("OnSignIn: " + signedIn);
     _signedIn = signedIn;
     if (_signedIn)
     {

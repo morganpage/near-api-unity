@@ -42,10 +42,10 @@ namespace NearClientUnity.Utilities
           string jsonString = await response.Content.ReadAsStringAsync();
           Debug.Log("Web.cs: FetchAsync: jsonString: " + jsonString);
           JObject rawResult = JObject.Parse(jsonString);
-          // if (rawResult.error != null && rawResult.error.data != null)
-          // {
-          //   throw new Exception($"[{rawResult.error.code}]: {rawResult.error.data.error_type}: {rawResult.error.data.error_message}");
-          // }
+          if (rawResult["error"] != null && rawResult["error"]["data"] != null)
+          {
+            throw new Exception($"[{rawResult["error"]["code"]}]: {rawResult["error"]["data"]["error_type"]}: {rawResult["error"]["data"]["error_message"]}");
+          }
           return (JObject)rawResult["result"];
         }
         else
@@ -94,11 +94,11 @@ namespace NearClientUnity.Utilities
       }
     }
 
-    public static async Task<dynamic> FetchJsonAsync(ConnectionInfo connection, string json = "")
-    {
-      var url = connection.Url;
-      var result = await FetchJsonAsync(url, json);
-      return result;
-    }
+    // public static async Task<dynamic> FetchJsonAsync(ConnectionInfo connection, string json = "")
+    // {
+    //   var url = connection.Url;
+    //   var result = await FetchJsonAsync(url, json);
+    //   return result;
+    // }
   }
 }
