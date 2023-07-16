@@ -275,15 +275,14 @@ namespace NearClientUnity
       return result;
     }
 
-    public async Task<JObject> ViewFunctionAsync(string contractId, string methodName, dynamic args)
+    public async Task<JObject> ViewFunctionAsync(string contractId, string methodName, JObject args)
     {
-      if (args == null)
-      {
-        args = new ExpandoObject();
-      }
-
+      // if (args == null)
+      // {
+      //   args = new ExpandoObject();
+      // }
+      Debug.Log("ViewFunctionAsync: " + contractId + " " + methodName + " " + args);
       var methodArgs = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(args));
-      Debug.Log("ViewFunctionAsync: " + contractId + " " + methodName + " " + methodArgs);
       JObject response = await _connection.Provider.QueryAsyncJO($"call/{contractId}/{methodName}", Base58.Encode(methodArgs));
 
       var result = response;

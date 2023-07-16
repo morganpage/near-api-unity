@@ -4,7 +4,7 @@ using NearClientUnity;
 using NearClientUnity.Utilities;
 using NearClientUnity.KeyStores;
 using NearClientUnity.Providers;
-
+using Newtonsoft.Json.Linq;
 
 namespace NEAR
 {
@@ -94,7 +94,7 @@ namespace NEAR
       contractOptions.viewMethods = new string[] { "nft_total_supply", "nft_supply_for_owner", "nft_tokens_for_owner" };
       ContractNear contract = new ContractNear(account, contractId, contractOptions);
       Debug.Log("NftTokensForOwner2: " + contract);
-      var response = await contract.View("nft_tokens_for_owner", new { account_id = accountId });
+      var response = await contract.View("nft_tokens_for_owner", new JObject(new JProperty("account_id", accountId)));
       Debug.Log("NftTokensForOwner3: " + response.result);
       NearCallbacks.Instance.NftTokensForOwner(response.result);
       // contract.View("nft_tokens_for_owner", new { account_id = accountId }, new ViewArgs(), (err, result) =>
