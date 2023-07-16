@@ -2383,6 +2383,7 @@ MonoBehaviour:
   _inputArgs: {fileID: 1562124245}
   _IsChangeMethod: {fileID: 2062200733}
   _buttonSignInOut: {fileID: 8768915775660383850}
+  _nearAPIConfig: {fileID: 11400000, guid: d545b1043169042e2a844f62b1d94c84, type: 2}
 --- !u!1 &1757250095
 GameObject:
   m_ObjectHideFlags: 0

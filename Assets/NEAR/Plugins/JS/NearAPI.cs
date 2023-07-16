@@ -5,13 +5,14 @@ using NearClientUnity.Utilities;
 using NearClientUnity.KeyStores;
 using NearClientUnity.Providers;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace NEAR
 {
   public class NearAPI
   {  //NEAR API JS see  https://docs.near.org/tools/near-api-js/quick-reference
     private static string _signedIn = "false";//Just to mimic the actual functionality
-    private static string _dummytokens = "[{token_id:'1',metadata:{title:'Fred',media:'https://roguefoxguild.mypinata.cloud/ipfs/QmYMT3s9C4ckQxfMEm7ew4PUVPSrYLeo36uhdhGSctDJdB/Character_1.png'} },{token_id:'2',metadata:{title:'Alice',media:'https://roguefoxguild.mypinata.cloud/ipfs/QmYMT3s9C4ckQxfMEm7ew4PUVPSrYLeo36uhdhGSctDJdB/Character_2.png'}}]";
+    //private static string _dummytokens = "[{token_id:'1',metadata:{title:'Fred',media:'https://roguefoxguild.mypinata.cloud/ipfs/QmYMT3s9C4ckQxfMEm7ew4PUVPSrYLeo36uhdhGSctDJdB/Character_1.png'} },{token_id:'2',metadata:{title:'Alice',media:'https://roguefoxguild.mypinata.cloud/ipfs/QmYMT3s9C4ckQxfMEm7ew4PUVPSrYLeo36uhdhGSctDJdB/Character_2.png'}}]";
 
 #if PLATFORM_WEBGL
 
@@ -87,7 +88,6 @@ namespace NEAR
     public static async void NftTokensForOwner(string accountId, string contractId, string network = "testnet")
     {
       Debug.Log("NftTokensForOwner: " + accountId + " " + contractId + " " + network);
-      //NearCallbacks.Instance.NftTokensForOwner(_dummytokens);
       Account account = new Account(Near.Connection, accountId);
       Debug.Log("NftTokensForOwner1: " + account);
       ContractOptions contractOptions = new ContractOptions();
@@ -97,17 +97,22 @@ namespace NEAR
       var response = await contract.View("nft_tokens_for_owner", new JObject(new JProperty("account_id", accountId)));
       Debug.Log("NftTokensForOwner3: " + response["result"]);
       NearCallbacks.Instance.NftTokensForOwner(response["result"].ToString());
-      // contract.View("nft_tokens_for_owner", new { account_id = accountId }, new ViewArgs(), (err, result) =>
-      // {
-      //   Debug.Log("NftTokensForOwner2: " + result);
-      //   NearCallbacks.Instance.NftTokensForOwner(result);
-      // }
     }
 
-    public static void ContractMethod(string accountId, string contractId, string methodName, string args = "", bool changeMethod = false, string network = "testnet")
+    public static async Task ContractMethod(string accountId, string contractId, string methodName, string args = "", bool changeMethod = false, string network = "testnet")
     {
       Debug.Log("ContractMethod: " + accountId + " " + contractId + " " + methodName + " " + args + " " + network + " " + changeMethod);
-      NearCallbacks.Instance.ContractMethod("Json returned from contract method call");
+
+
+      Account account = new Account(Near.Connection, accountId);
+      Debug.Log("ContractMethod: " + account);
+      ContractOptions contractOptions = new ContractOptions();
+      contractOptions.viewMethods = new string[] { "nft_total_supply", "nft_supply_for_owner", "nft_tokens_for_owner" };
+      ContractNear contract = new ContractNear(account, contractId, contractOptions);
+      Debug.Log("ContractMethod: " + contract);
+      var response = await contract.View("nft_tokens_for_owner", new JObject(new JProperty("account_id", accountId)));
+      Debug.Log("ContractMethod: " + response["result"]);
+      NearCallbacks.Instance.ContractMethod(response["result"].ToString());
     }
 
 
