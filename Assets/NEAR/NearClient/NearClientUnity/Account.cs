@@ -1,6 +1,7 @@
 ﻿using NearClientUnity.Providers;
 using NearClientUnity.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -274,7 +275,7 @@ namespace NearClientUnity
       return result;
     }
 
-    public async Task<dynamic> ViewFunctionAsync(string contractId, string methodName, dynamic args)
+    public async Task<JObject> ViewFunctionAsync(string contractId, string methodName, dynamic args)
     {
       if (args == null)
       {
@@ -282,15 +283,16 @@ namespace NearClientUnity
       }
 
       var methodArgs = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(args));
-      var response = await _connection.Provider.QueryAsync($"call/{contractId}/{methodName}", Base58.Encode(methodArgs));
+      Debug.Log("ViewFunctionAsync: " + contractId + " " + methodName + " " + methodArgs);
+      JObject response = await _connection.Provider.QueryAsyncJO($"call/{contractId}/{methodName}", Base58.Encode(methodArgs));
 
       var result = response;
 
-      if (result.logs != null && result.logs.GetType() is ArraySegment<string> && result.logs.Length > 0)
-      {
-        PrintLogs(contractId, result.logs);
-      }
-
+      // if (result.logs != null && result.logs.GetType() is ArraySegment<string> && result.logs.Length > 0)
+      // {
+      //   PrintLogs(contractId, result.logs);
+      // }
+      //Debug.Log("ViewFunctionAsync: " + result);
       return result;
     }
 
