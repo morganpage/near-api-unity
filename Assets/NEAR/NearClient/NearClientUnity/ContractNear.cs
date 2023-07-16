@@ -92,15 +92,10 @@ namespace NearClientUnity
       }
     }
 
-    public async Task<dynamic> View(string methodName, JObject args)
+    public async Task<JObject> View(string methodName, JObject args)
     {
-      // JArray argsJson = new JArray();
-      // foreach (var item in args)
-      // {
-      //   argsJson.Add(item);
-      // }
       var rawResult = await _account.ViewFunctionAsync(_contractId, methodName, args);
-      dynamic data = new ExpandoObject();
+      JObject data = new JObject();
       var logs = new List<string>();
       var result = new List<byte>();
       foreach (var log in rawResult["logs"])
@@ -111,8 +106,8 @@ namespace NearClientUnity
       {
         result.Add((byte)item);
       }
-      data.logs = logs.ToArray();
-      data.result = Encoding.UTF8.GetString(result.ToArray()).Trim('"');
+      data["logs"] = new JArray(logs.ToArray());
+      data["result"] = Encoding.UTF8.GetString(result.ToArray()).Trim('"');
       return data;
     }
   }

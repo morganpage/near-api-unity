@@ -95,8 +95,8 @@ namespace NEAR
       ContractNear contract = new ContractNear(account, contractId, contractOptions);
       Debug.Log("NftTokensForOwner2: " + contract);
       var response = await contract.View("nft_tokens_for_owner", new JObject(new JProperty("account_id", accountId)));
-      Debug.Log("NftTokensForOwner3: " + response.result);
-      NearCallbacks.Instance.NftTokensForOwner(response.result);
+      Debug.Log("NftTokensForOwner3: " + response["result"]);
+      NearCallbacks.Instance.NftTokensForOwner(response["result"].ToString());
       // contract.View("nft_tokens_for_owner", new { account_id = accountId }, new ViewArgs(), (err, result) =>
       // {
       //   Debug.Log("NftTokensForOwner2: " + result);
