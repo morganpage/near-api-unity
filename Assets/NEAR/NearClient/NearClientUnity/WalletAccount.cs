@@ -3,13 +3,9 @@ using NearClientUnity.Utilities;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Dynamic;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Util;
 using UnityEngine;
 
 namespace NearClientUnity
@@ -20,7 +16,6 @@ namespace NearClientUnity
     private const string LoginWalletUrlSuffix = "/login/";
     private const string PendingAccessKeyPrefix = "pending_key";
 
-    //private dynamic _authData = new ExpandoObject();
     private JObject _authDataJson = new JObject();
     private string _authDataKey;
     private IExternalAuthService _authService;
@@ -40,18 +35,13 @@ namespace NearClientUnity
       _keyStore = (near.Connection.Signer as InMemorySigner).KeyStore;
       _authService = authService;
       _authStorage = authStorage;
-
-      Debug.Log("WalletAccount: " + _authDataKey);
       if (_authStorage.HasKey(_authDataKey))
       {
-        //_authData.AccountId = _authStorage.GetValue(_authDataKey);
         _authDataJson["AccountId"] = _authStorage.GetValue(_authDataKey);
       }
       else
       {
         _authDataJson = new JObject();
-        //_authData.AccountId = null;
-        //_authDataJson["AccountId"] = null;
       }
     }
 
@@ -63,10 +53,6 @@ namespace NearClientUnity
       Uri uri = new Uri(url);
       string publicKey = HttpUtility.ParseQueryString(uri.Query).Get("public_key");
       string accountId = HttpUtility.ParseQueryString(uri.Query).Get("account_id");
-      Debug.Log("CompleteSignIn: " + url);
-      Debug.Log("CompleteSignIn: " + publicKey);
-      Debug.Log("CompleteSignIn: " + accountId);
-      //_authData.AccountId = accountId;
       _authDataJson["AccountId"] = accountId;
       try
       {
@@ -81,7 +67,6 @@ namespace NearClientUnity
 
     public string GetAccountId()
     {
-      Debug.Log("GetAccountId");
       if (_authDataJson["AccountId"] == null)
       {
         return "";
@@ -91,7 +76,6 @@ namespace NearClientUnity
 
     public bool IsSignedIn()
     {
-      Debug.Log("IsSignedIn");
       if (_authDataJson["AccountId"] == null) return false;
       return true;
     }
@@ -116,23 +100,17 @@ namespace NearClientUnity
             }).ReadAsStringAsync().Result;
 
       await _keyStore.SetKeyAsync(_networkId, PendingAccessKeyPrefix + accessKey.GetPublicKey(), accessKey);
-      Debug.Log("RequestSignIn: " + url.Uri.AbsoluteUri);
       return _authService.OpenUrl(url.Uri.AbsoluteUri);
     }
 
     public void SignOut()
     {
-      Debug.Log("SignOut");
-      // _authData = new ExpandoObject();
-      // _authData.AccountId = null;
       _authDataJson = new JObject();
-      //_authDataJson["AccountId"] = null;
       _authStorage.DeleteKey(_authDataKey);
     }
 
     private async Task MoveKeyFromTempToPermanent(string accountId, string publicKey)
     {
-      Debug.Log("MoveKeyFromTempToPermanent: " + accountId + " " + publicKey);
       var pendingAccountId = PendingAccessKeyPrefix + publicKey;
       KeyPair keyPair;
       try

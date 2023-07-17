@@ -25,12 +25,8 @@ namespace NearClientUnity
 
     public static Connection FromConfig(ConnectionConfig config)
     {
-      Debug.Log("Connection.cs: FromConfig(ConnectionConfig config)");
       var provider = GetProvider(config.Provider);
-      Debug.Log("Connection.cs: FromConfig(ConnectionConfig config)1");
       var signer = GetSigner(config.Signer);
-      Debug.Log("Connection.cs: FromConfig(ConnectionConfig config)2");
-
       return new Connection(config.NetworkId, provider, signer);
     }
 
@@ -40,10 +36,7 @@ namespace NearClientUnity
       {
         case ProviderType.JsonRpc:
           {
-            Debug.Log("Connection.cs: GetProvider(ProviderConfig config)");
-            //string url = config.Args.Url as string;
-            string url = "https://rpc.testnet.near.org";
-            Debug.Log("Connection.cs: GetProvider(ProviderConfig config)1");
+            string url = config.ArgsJson["Url"].ToString();
             return new JsonRpcProvider(url);
           }
         default:
@@ -59,7 +52,6 @@ namespace NearClientUnity
           {
             InMemoryKeyStore keyStore = JsonConvert.DeserializeObject<InMemoryKeyStore>(config.ArgsJson["KeyStore"].ToString());
             return new InMemorySigner(keyStore);
-            //return new InMemorySigner(config.Args.KeyStore as KeyStore);
           }
         default:
           throw new Exception($"Unknown signer type {config.Type}");

@@ -12,14 +12,33 @@ namespace NEAR
     public string WalletUrl;
   }
 
-  [CreateAssetMenu(menuName = "ScriptableObjects/NearAPIConfig")]
-  public class NearAPIConfig : ScriptableObject
+  public class NearAPIConfig
   {
-    public NearAPIConfigNetwork[] Networks;
+    private NearAPIConfigNetwork[] _networks;
+
+    public NearAPIConfig()
+    {
+      _networks = new NearAPIConfigNetwork[]
+      {
+        new NearAPIConfigNetwork()
+        {
+          NetworkId = "testnet",
+          NodeUrl = "https://rpc.testnet.near.org",
+          WalletUrl = "https://testnet.mynearwallet.com/"
+        },
+        new NearAPIConfigNetwork()
+        {
+          NetworkId = "mainnet",
+          NodeUrl = "https://rpc.mainnet.near.org",
+          WalletUrl = "https://app.mynearwallet.com/"
+        }
+      };
+    }
+
 
     public NearAPIConfigNetwork GetNetwork(string networkId)
     {
-      foreach (NearAPIConfigNetwork network in Networks)
+      foreach (NearAPIConfigNetwork network in _networks)
       {
         if (network.NetworkId == networkId)
         {

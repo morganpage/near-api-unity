@@ -26,9 +26,7 @@ namespace NearClientUnity
 
     public override async Task<PublicKey> GetPublicKeyAsync(string accountId = "", string networkId = "")
     {
-      Debug.Log("InMemorySigner.cs: GetPublicKeyAsync: " + accountId + " " + networkId);
       var keyPair = await _keyStore.GetKeyAsync(networkId, accountId);
-      Debug.Log("InMemorySigner.cs: GetPublicKeyAsync: " + keyPair);
       return keyPair?.GetPublicKey();
     }
 

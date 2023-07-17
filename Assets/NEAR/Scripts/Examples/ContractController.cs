@@ -17,7 +17,6 @@ public class ContractController : MonoBehaviour
   [SerializeField] private Toggle _IsChangeMethod;
 
   [SerializeField] Button _buttonSignInOut;
-  [SerializeField] NearAPIConfig _nearAPIConfig;
 
   private string _accountId;
   private bool _signedIn;
@@ -41,26 +40,7 @@ public class ContractController : MonoBehaviour
     _inputNetwork.text = "testnet";
     _inputContractId.text = "nft-unity-contract.morganpage1.testnet";
     _inputMethodName.text = "nft_tokens_for_owner";
-    //NearAPI.IsSignedIn(_inputNetwork.text);
-    Application.deepLinkActivated += async (string url) => await CompleteSignIn(url);
-    NearAPIConfigNetwork nearAPIConfigNetwork = _nearAPIConfig.GetNetwork(_inputNetwork.text);
-    NearAPI.StartUp(_inputContractId.text, nearAPIConfigNetwork.NetworkId, nearAPIConfigNetwork.NodeUrl, nearAPIConfigNetwork.WalletUrl);
-    OnSignIn(NearAPI.WalletAccount.IsSignedIn());
   }
-  async Task CompleteSignIn(string url)
-  {
-    Debug.Log("CompleteSignIn: " + url);
-    await NearAPI.WalletAccount.CompleteSignIn(url);
-    OnSignIn(NearAPI.WalletAccount.IsSignedIn());
-    //_signedIn = NearAPI.WalletAccount.IsSignedIn();
-
-    // await NearPersistentManager.Instance.WalletAccount.CompleteSignIn(url);
-    // if(NearPersistentManager.Instance.WalletAccount.IsSignedIn() == true)
-    // {
-    //     SceneManager.LoadScene("Near", LoadSceneMode.Single);
-    // }        
-  }
-
 
   private void OnSignIn(bool signedIn)
   {
@@ -108,5 +88,13 @@ public class ContractController : MonoBehaviour
   {
     _textInfo.text = json;
   }
+
+
+  public async void HandleDeepLink(string url)
+  {
+    Debug.Log("HandleDeepLink: " + url);
+    await NearAPI.CompleteSignIn(url);
+  }
+
 
 }

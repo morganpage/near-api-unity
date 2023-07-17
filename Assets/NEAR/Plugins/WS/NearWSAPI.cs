@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
+using NearClientUnity;
+using System.Threading.Tasks;
 
 namespace NEAR
 {
@@ -31,49 +33,43 @@ namespace NEAR
     public static extern void WS_CallMethod(string contractId, string methodName, string args = "{}");
 
 #else
+    public static WalletAccount WalletAccount { get { return NearAPI.WalletAccount; } }
     private static string _signedIn = "false";//Just to mimic the actual functionality
-    //These are just for testing in the editor
-    public static void WS_StartUp(string contractId, string network = "testnet")
+    public static async void WS_StartUp(string contractId, string network = "testnet")
     {
-      Debug.Log("SignIn: " + contractId + " " + network);
-      _signedIn = "true";
-      NearCallbacks.Instance.IsSignedIn(_signedIn);
+      await NearAPI.StartUp(contractId, network);
     }
 
     public static void WS_SignIn()
     {
-      Debug.Log("SignIn: ");
-      _signedIn = "true";
+      NearAPI.RequestSignIn();
     }
 
     public static void WS_SignOut()
     {
-      Debug.Log("SignOut: ");
-      _signedIn = "false";
+      NearAPI.SignOut();
     }
 
     public static void WS_IsSignedIn()
     {
-      NearCallbacks.Instance.IsSignedIn(_signedIn);
+      NearAPI.IsSignedIn();
     }
 
     public static void WS_GetAccountId()
     {
-      Debug.Log("GetAccountId: ");
-      NearCallbacks.Instance.GetAccountId("testing.near");
+      NearAPI.GetAccountId();
     }
 
-    public static void WS_ViewMethod(string contractId, string methodName, string args = "")
+    public static async void WS_ViewMethod(string contractId, string methodName, string args = "")
     {
-      Debug.Log("ViewMethod: " + contractId + " " + methodName);
-      string jsonExample = "[]";
-      NearCallbacks.Instance.ViewMethod(jsonExample);
+      string accountId = WalletAccount.GetAccountId();
+      await NearAPI.ContractMethod(accountId, contractId, methodName, args, false);
     }
 
-    public static void WS_CallMethod(string contractId, string methodName, string args = "")
+    public static async Task WS_CallMethod(string contractId, string methodName, string args = "")
     {
-      Debug.Log("CallMethod: " + contractId + " " + methodName);
-      NearCallbacks.Instance.CallMethod("Json from CallMethod");
+      string accountId = WalletAccount.GetAccountId();
+      await NearAPI.ContractMethod(accountId, contractId, methodName, args, true);
     }
 
 #endif

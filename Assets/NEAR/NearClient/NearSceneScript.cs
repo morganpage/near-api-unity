@@ -32,15 +32,12 @@ public class NearSceneScript : MonoBehaviour
   async Task CollectInformation()
   {
     var walletAccountId = NearPersistentManager.Instance.WalletAccount.GetAccountId();
-    Debug.Log($"Wallet Account Id: {walletAccountId}");
     Account account = await NearPersistentManager.Instance.Near.AccountAsync(walletAccountId);
-    Debug.Log($"Account: {account}");
     AccountState accountState = await account.GetStateAsync();
     accountId = walletAccountId;
     accountBalance = FormatNearAmount(accountState.Amount);
     accountStorageUsed = accountState.StorageUsage.ToString();
     accountStoragePaid = accountState.StoragePaidAt.ToString();
-    Debug.Log($"Account Id: {accountId}");
     finished = true;
   }
 

@@ -7,6 +7,8 @@ using NEAR;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using NearClientUnity;
 
 public class WSController : MonoBehaviour
 {
@@ -42,6 +44,7 @@ public class WSController : MonoBehaviour
   void Start()
   {
     NearWSAPI.WS_StartUp(CONTRACT_ID, NETWORK);
+    OnSignIn(NearWSAPI.WalletAccount.IsSignedIn());
   }
 
   public void SignInOut()
@@ -53,7 +56,7 @@ public class WSController : MonoBehaviour
     }
     else
     {
-      NearWSAPI.WS_SignIn();//This will do a page refresh anyway
+      NearWSAPI.WS_SignIn();
       NearWSAPI.WS_IsSignedIn();
     }
   }
@@ -69,6 +72,7 @@ public class WSController : MonoBehaviour
     }
     else
     {
+      _textMessages.text = "";
       _textWelcome.text = "You must sign in...";
       _buttonSignInOut.GetComponentInChildren<TMP_Text>().text = "Sign In";
     }
@@ -82,47 +86,48 @@ public class WSController : MonoBehaviour
 
   void GetMessages()
   {
-    //NearWSAPI.ContractMethod("guest-book.testnet", "get_messages", "testnet");
     NearWSAPI.WS_ViewMethod(CONTRACT_ID, "getMessages");
   }
 
-
-  public void AddMessage()
+  public async void AddMessage()
   {
-    Debug.Log("AddMessage: " + _inputMessage.text);
     _buttonAdd.interactable = false;
     //args: { text: message }
     string args = @"{""text"":""" + _inputMessage.text + @"""}";
     var definition = new { text = _inputMessage.text };
     string json = JsonConvert.SerializeObject(definition);
-    Debug.Log("json: " + json);
-    NearWSAPI.WS_CallMethod(CONTRACT_ID, "addMessage", json);
+    await NearWSAPI.WS_CallMethod(CONTRACT_ID, "addMessage", json);
+    OnCallMethod(null);
   }
 
   void OnViewMethod(string result)
   {
-    Debug.Log("OnViewMethod: " + result);
     JArray data = JArray.Parse(result);
-    Debug.Log("data: " + data);
     IList<JToken> results = data.Children().ToList();
     string messages = "";
     foreach (JToken token in results)
     {
       string sender = token["sender"].ToString();
       string text = token["text"].ToString();
+      if (sender.Length > 20) sender = sender.Substring(0, 20) + "...";
+      if (text.Length > 20) text = text.Substring(0, 20) + "...";
       messages += sender + ": " + text + System.Environment.NewLine;
-      // Enemy enemy = result["fields"].ToObject<Enemy>();
-      // enemies.Add(enemy);
     }
     _textMessages.text = messages;
-    //_textMessages.text = result;
   }
 
   void OnCallMethod(string result)
   {
-    Debug.Log("OnCallMethod: " + result);
     _buttonAdd.interactable = true;
     _inputMessage.text = "";
     GetMessages();
   }
+
+  public async void HandleDeepLink(string url)
+  {
+    Debug.Log("HandleDeepLink: " + url);
+    await NearAPI.CompleteSignIn(url);
+  }
+
+
 }

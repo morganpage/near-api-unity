@@ -1,33 +1,41 @@
-﻿namespace NearClientUnity.Providers
+﻿using System;
+using Newtonsoft.Json.Linq;
+
+namespace NearClientUnity.Providers
 {
-    public class ExecutionStatus
+  public class ExecutionStatus
+  {
+    public ExecutionError Failure { get; set; }
+    public string SuccessReceiptId { get; set; }
+    public string SuccessValue { get; set; }
+
+    public static ExecutionStatus FromDynamicJsonObject(JObject jsonObject)
     {
-        public ExecutionError Failure { get; set; }
-        public string SuccessReceiptId { get; set; }
-        public string SuccessValue { get; set; }
+      if (jsonObject.ToString() == "Unknown")
+      {
+        return new ExecutionStatus();
+      }
 
-        public static ExecutionStatus FromDynamicJsonObject(dynamic jsonObject)
+      var isFailure = jsonObject["Failure"] != null;
+
+      if (isFailure)
+      {
+        return new ExecutionStatus()
         {
-            if (jsonObject.ToString() == "Unknown")
-            {
-                return new ExecutionStatus();
-            }
+          Failure = ExecutionError.FromDynamicJsonObject((JObject)jsonObject["Failure"]),
+        };
+      }
 
-            var isFailure = jsonObject.Failure != null;
-
-            if (isFailure)
-            {
-                return new ExecutionStatus()
-                {
-                    Failure = ExecutionError.FromDynamicJsonObject(jsonObject.Failure),
-                };
-            }
-
-            return new ExecutionStatus()
-            {
-                SuccessReceiptId = jsonObject.SuccessReceiptId,
-                SuccessValue = jsonObject.SuccessValue,
-            };
-        }
+      return new ExecutionStatus()
+      {
+        SuccessReceiptId = jsonObject["SuccessReceiptId"].ToString(),
+        SuccessValue = jsonObject["SuccessValue"].ToString(),
+      };
     }
+
+    public static implicit operator ExecutionStatus(JToken v)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

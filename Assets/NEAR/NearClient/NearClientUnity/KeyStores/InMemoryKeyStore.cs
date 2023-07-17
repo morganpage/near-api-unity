@@ -42,7 +42,6 @@ namespace NearClientUnity.KeyStores
 
     public override async Task<KeyPair> GetKeyAsync(string networkId, string accountId)
     {
-      Debug.Log("InMemoryKeyStore.cs: GetKeyAsync: " + networkId + " " + accountId);
       return await Task.Factory.StartNew(() =>
       {
         try
@@ -77,6 +76,7 @@ namespace NearClientUnity.KeyStores
 
     public override async Task SetKeyAsync(string networkId, string accountId, KeyPair keyPair)
     {
+      // Debug.Log("InMemoryKeyStore.cs: SetKeyAsync: " + networkId + " " + accountId + " " + keyPair);
       await Task.Factory.StartNew(() =>
       {
         _keys[$"{accountId}:{networkId}"] = keyPair.ToString();

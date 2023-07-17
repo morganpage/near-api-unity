@@ -18,41 +18,28 @@ namespace NearClientUnity
     public Near(NearConfig config)
     {
       _config = config;
-      Debug.Log("Near.cs: Near(NearConfig config)");
-      //dynamic providerArgs = new ExpandoObject();
       JObject providerArgsJson = new JObject();
-      Debug.Log("Near.cs: Near(NearConfig config)1");
-      //providerArgs.Url = config.NodeUrl;
       providerArgsJson["Url"] = config.NodeUrl;
-      //dynamic signerArgs = new ExpandoObject();
       JObject signerArgsJson = new JObject();
-      //signerArgs.KeyStore = config.KeyStore;
       signerArgsJson["KeyStore"] = JsonConvert.SerializeObject(config.KeyStore);
-      Debug.Log("Near.cs: Near(NearConfig config)2:" + signerArgsJson["KeyStore"]);
       var connectionConfig = new ConnectionConfig()
       {
         NetworkId = config.NetworkId,
         Provider = new ProviderConfig()
         {
           Type = config.ProviderType,
-          //Args = providerArgs,
           ArgsJson = providerArgsJson
         },
         Signer = new SignerConfig()
         {
           Type = config.SignerType,
-          //Args = signerArgs,
           ArgsJson = signerArgsJson
         }
       };
-      Debug.Log("Near.cs: Near(NearConfig config)3");
       _connection = Connection.FromConfig(connectionConfig);
-      Debug.Log("Near.cs: Near(NearConfig config)4");
 
       if (config.MasterAccount != null)
       {
-        Debug.Log("Near.cs: Near(NearConfig config)5");
-
         // TODO: figure out better way of specifiying initial balance.
         var initialBalance = config.InitialBalance > 0
             ? config.InitialBalance
@@ -62,16 +49,12 @@ namespace NearClientUnity
       }
       else if (config.HelperUrl != null)
       {
-        Debug.Log("Near.cs: Near(NearConfig config)6");
-
         _accountCreator = new UrlAccountCreator(_connection, config.HelperUrl);
       }
       else
       {
         _accountCreator = null;
       }
-      Debug.Log("Near.cs: Near(NearConfig config)7");
-
     }
 
     public AccountCreator AccountCreator => _accountCreator;
@@ -109,11 +92,8 @@ namespace NearClientUnity
 
     public async Task<Account> AccountAsync(string accountId)
     {
-      Debug.Log("Near.cs: AccountAsync(string accountId)");
       var account = new Account(_connection, accountId);
-      Debug.Log("Near.cs: AccountAsync(string accountId)1:" + account);
       await account.FetchStateAsync();
-      Debug.Log("Near.cs: AccountAsync(string accountId)2:" + account);
       return account;
     }
 

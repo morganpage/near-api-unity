@@ -1,10 +1,12 @@
-﻿namespace NearClientUnity.Utilities
-{
-    public interface INetwork
-    {
-        string ChainId { get; set; }
-        string Name { get; set; }
+﻿using Newtonsoft.Json.Linq;
 
-        dynamic DefaultProvider(dynamic providers);
-    }
+namespace NearClientUnity.Utilities
+{
+  public interface INetwork
+  {
+    string ChainId { get; set; }
+    string Name { get; set; }
+
+    JObject DefaultProvider(JArray providers);
+  }
 }
