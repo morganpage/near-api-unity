@@ -34,4 +34,4 @@ https://discord.gg/rogues
 
 ## License
 
-See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
+See the [LICENSE](LICENSE.MD) file for license rights and limitations (MIT).
